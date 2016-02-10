@@ -3,10 +3,130 @@ _Two great sites to check speed and security: http://tools.pingdom.com/fpt/ & ht
 
 _This is provided totally without gaurantee or warrenty. Buyer beware._
 
-# Initial setup
+## Initial setup
 
 ### GET DIGITAL OCEAN
-Buy a new [Digital Ocean](http://www.digitalocean.com) droplet with Wordpress pre-installed ($10 per month).
+Buy a new [Digital Ocean](http://www.digitalocean.com) droplet with Wordpress pre-installed ($10 per month) or install Wordpress from scratch on a basic Ubuntu 14.04 VPS (skip if pre-installed):
+```
+sudo apt-get update
+sudo apt-get install nginx
+sudo apt-get install mysql-server
+sudo mysql_install_db
+sudo mysql_secure_installation
+sudo apt-get install php5-fpm php5-mysql
+sudo nano /etc/php5/fpm/php.ini
+cgi.fix_pathinfo=0 # uncomment and add 0
+sudo service php5-fpm restart
+
+# change default nginx web config
+sudo nano /etc/nginx/sites-available/default
+# copy and paste this in to replace the entire file
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    root /usr/share/nginx/html;
+    index index.php index.html index.htm;
+
+    server_name server_domain_name_or_IP;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+# CTRL + X to save and exit nano
+sudo service nginx restart
+
+# setup mysql
+mysql -u root -p
+CREATE DATABASE supersecurewp;
+CREATE USER wordpressuser@localhost IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON wordpress.* TO wordpressuser@localhost;
+FLUSH PRIVILEGES;
+exit
+
+# download wordpress
+cd ~
+mkdir projects && cd projects
+wget http://wordpress.org/latest.tar.gz
+tar xzvf latest.tar.gz # creates directory called wordpress with all necessary files
+sudo apt-get update
+sudo apt-get install php5-gd libssh2-php
+
+# config wordpress
+cd wordpress
+cp wp-config-sample.php wp-config.php
+nano wp-config.php
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define('DB_NAME', 'wordpress');
+
+/** MySQL database username */
+define('DB_USER', 'wordpressuser');
+
+/** MySQL database password */
+define('DB_PASSWORD', 'password');
+
+# press CTRL + X to save and exit nano
+sudo mkdir -p /var/www/html
+sudo rsync -avP ~/projects/wordpress/ /var/www/html/
+cd /var/www/html/
+sudo chown -R supersecureuser:www-data /var/www/html/*
+mkdir wp-content/uploads
+sudo chown -R :www-data /var/www/html/wp-content/uploads
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/wordpress
+
+# edit wordpress file to be the following:
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server ipv6only=on;
+
+        root /var/www/html;
+        index index.php index.html index.htm;
+
+        server_name your_domain.com;
+
+        location / {
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+
+        error_page 404 /404.html;
+
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /usr/share/nginx/html;
+        }
+
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+}
+
+sudo ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/
+sudo service nginx restart
+sudo service php5-fpm restart
+# now go to the url and you should be greeted with the wordpress five-minute install screen
+```
 
 ## CREATE USERS AND LOCK DOWN SSH
 ssh into the new instance based on the credentials Digital Ocean provided.
@@ -15,13 +135,13 @@ ssh into the new instance based on the credentials Digital Ocean provided.
 
 Add a new user.
 
-` adduser wpuser `
+` adduser supersecureuser `
 
-Follow the prompts to set a new password.
+Follow the prompts to set a new strong password.
 
 Edit visudo and add the new user with all the rights as root just below the root (ALL:ALL) line:
 
-` wpuser ALL=(ALL:ALL) ALL `
+` supersecureuser ALL=(ALL:ALL) ALL `
 
 Edit the sshd_config file and change the default port 22 and PermitRootLogin no:
 
@@ -29,7 +149,7 @@ Edit the sshd_config file and change the default port 22 and PermitRootLogin no:
 nano /etc/ssh/sshd_config 
 port 1900 
 PermitRootLogin no 
-AllowUsers wpuser
+AllowUsers supersecureuser
 CTRL + X and then y to save and exit
 service ssh restart 
 ```
