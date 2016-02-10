@@ -31,6 +31,26 @@ AllowUsers wpuser
 CTRL + X and then y to save and exit
 service ssh restart 
 ```
+
+## LOCK DOWN UBUNTU
+Install ufw and [fail2ban](http://fail2ban.org).
+```
+apt-get install ufw fail2ban vim -y
+cp /etc/fail2ban/jail.{conf,local}
+sudo vim /etc/fail2ban/filter.d/sshd.conf
+# add this right below the other regex lines: ^%(__prefix_line)sReceived disconnect from <HOST>: 11: Bye Bye \[preauth\]\s*$
+# exit vim by typing :wq and hitting enter
+sudo service fail2ban restart
+```
+
+Install _unattended-upgrades_ to keep your server up-to-date with having to login all of the time.
+```
+sudo apt-get install unattended-upgrades
+sudo dpkg-reconfigure unattended-upgrades
+```
+
+
+
 ## LOCK DOWN APACHE AND PHP (for NGINX, see below this section)
 Edit the apache.conf file and add the following lines:
 
@@ -98,15 +118,7 @@ Log into another terminal session as the new user you created to check to make s
 ssh wpuser@[new ip address] -p 1900
 ```
 If that works, then you are good to go to close your root session and never log into root again.
-Optional steps: install ufw and fail2ban.
-```
-apt-get install ufw fail2ban vim -y
-cp /etc/fail2ban/jail.{conf,local}
-sudo vim /etc/fail2ban/filter.d/sshd.conf
-# add this right below the other regex lines: ^%(__prefix_line)sReceived disconnect from <HOST>: 11: Bye Bye \[preauth\]\s*$
-# exit vim by typing :wq and hitting enter
-sudo service fail2ban restart
-```
+
 Congratulations! You now can visit the ip address in your web browser and go through the wordpress installation knowing that you locked down your server properly.
 
 ## POST WORDPRESS INSTALL
