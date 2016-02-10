@@ -1,6 +1,6 @@
 # secure-wordpress
 
-It is not Wordpress's fault that you suck at security on your server.
+It is not Wordpress's fault that your self-hosted instance is insecure. Wordpress is not insecure, people are.
 
 Overview of Recommendations:
 
