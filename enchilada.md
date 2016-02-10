@@ -1,6 +1,8 @@
 _This guide is meant to be a signpost to guide the way, not a dictionary to memorize. Your mileage may vary._
 _Two great sites to check speed and security: http://tools.pingdom.com/fpt/ & https://securityheaders.io_
 
+_This is provided totally without gaurantee or warrenty. Buyer beware._
+
 # Initial setup
 
 ### GET DIGITAL OCEAN
