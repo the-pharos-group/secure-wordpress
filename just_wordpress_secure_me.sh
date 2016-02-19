@@ -1,6 +1,7 @@
 #!/bin/bash
 # dont forget to set all of these and make the passwords long
-UBUNTUUSER="cooluser"
+# also dont forget to adduser newuser sudo and login to that only
+
 WPDBNAME="poo"
 WPDBUSERNAME="poo"
 WPDBUSERPW="!1newmedia"
@@ -13,11 +14,8 @@ sudo apt-get update -y
 sudo apt-get install unattended-upgrades -y
 sudo dpkg-reconfigure unattended-upgrades
 
-# add new user
-sudo adduser $UBUNTUUSER
-sudo adduser $UBUNTUUSER sudo
-su $UBUNTUUSER
-cd ~
+# add new user (do this before you started)
+
 # install nginx & lock it down
 sudo apt-get install nginx nginx-extras -y
 # turn server tokens off for nginx (shuts off header info)
@@ -34,9 +32,9 @@ sudo apt-get install mysql-server
 sudo mysql_install_db
 sudo mysql_secure_installation
 
-mysql -uroot -e 'create database $WPDBNAME;' -p
-mysql -uroot -e "create user `$WPDBUSERNAME`@`localhost` IDENTIFIED BY '$WPDBUSERPW';" -p
-mysql -uroot -e "grant all privileges on `$WPDBNAME`.* to `$WPDBUSERNAME`@`localhost`;FLUSH PRIVILEGES;" -p
+mysql --user=root --execute="create database $WPDBNAME;" --password="$WPDBUSERPW"
+mysql --user=root --password="$WPDBUSERPW" --execute="create user $WPDBUSERNAME@localhost IDENTIFIED BY '$WPDBUSERPW';" -p
+mysql --user=root --execute="grant all privileges on $WPDBNAME.* to $WPDBUSERNAME@localhost;FLUSH PRIVILEGES;" --password="$WPDBUSERPW"
 
 # get wordpress setup
 cd ~
