@@ -32,16 +32,16 @@ sudo apt-get install mysql-server
 sudo mysql_install_db
 sudo mysql_secure_installation
 
-mysql --user=root --execute="create database $WPDBNAME;" --password="$WPDBUSERPW"
-mysql --user=root --password="$WPDBUSERPW" --execute="create user $WPDBUSERNAME@localhost IDENTIFIED BY '$WPDBUSERPW';" -p
-mysql --user=root --execute="grant all privileges on $WPDBNAME.* to $WPDBUSERNAME@localhost;FLUSH PRIVILEGES;" --password="$WPDBUSERPW"
+mysql --user=root --execute="create database '$WPDBNAME';" --password="$WPDBUSERPW"
+mysql --user=root --password="$WPDBUSERPW" --execute="create user '$WPDBUSERNAME'@localhost IDENTIFIED BY '$WPDBUSERPW';" -p
+mysql --user=root --execute="grant all privileges on '$WPDBNAME'.* to '$WPDBUSERNAME'@localhost;FLUSH PRIVILEGES;" --password="$WPDBUSERPW"
 
 # get wordpress setup
 cd ~
 mkdir projects && cd projects
 wget http://wordpress.org/latest.tar.gz
 tar xzvf latest.tar.gz # creates directory called wordpress with all necessary files
-sudo apt-get install php5-gd libssh2-php -y
+sudo apt-get install php5-fpm php5-mysql php5-gd libssh2-php -y
 
 # clone this repo
 sudo apt-get install git -y
