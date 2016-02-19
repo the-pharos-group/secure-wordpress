@@ -61,6 +61,7 @@ sed -i "3i server_name $DOMAINNAME;" default
 sed -i "4i 301 redirect http://$WWWDOMAINNAME\$request_uri;" default
 sed -i "12i server_name $WWWDOMAINNAME;"
 sudo cp default /etc/nginx/sites-available/default
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 #restart nginx to make sure everything is working
 sudo service nginx restart
