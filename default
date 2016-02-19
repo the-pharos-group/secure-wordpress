@@ -1,5 +1,6 @@
 server {
         listen 80;
+        # uncomment as necessary or use just-secure-me bash script
         #server_name your_domain.com;
         #301 redirect http://www.your_domain.com$request_uri;
 }
@@ -8,7 +9,7 @@ server {
 
         root /var/www/html;
         index index.php index.html index.htm;
-
+        # uncomment as necessary or use just-secure-me bash script
         #server_name www.your_domain.com;
 
         location / {
