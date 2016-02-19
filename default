@@ -1,7 +1,7 @@
 server {
         listen 80;
-        server_name your_domain.com;
-        301 redirect http://www.your_domain.com$request_uri;
+        #server_name your_domain.com;
+        #301 redirect http://www.your_domain.com$request_uri;
 }
 server {
         listen 80;
@@ -9,7 +9,7 @@ server {
         root /var/www/html;
         index index.php index.html index.htm;
 
-        server_name www.your_domain.com;
+        #server_name www.your_domain.com;
 
         location / {
                 # try_files $uri $uri/ =404;
