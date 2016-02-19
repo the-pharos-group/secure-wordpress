@@ -73,6 +73,8 @@ sudo rsync -avP ~/projects/wordpress/ /var/www/html/
 cd /var/www/html/
 sudo chown -R $USER:www-data /var/www/html/*
 mkdir wp-content/uploads
+echo $(curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//')
 
-echo "ALL DONE! GO TO THE IP ADDRESS OF THIS SERVER IN BROWSER AND FINISH INSTALL"
+echo "ALL DONE! GO TO THE IP ADDRESS OF THIS SERVER LISTED ABOVE IN BROWSER AND FINISH INSTALL"
 echo "DONT FORGET TO RUN THE SERVER LOCKDOWN SCRIPT AS WELL TO REALLY SECURE THIS BOX"
+echo "ALSO DONT FORGET TO UPDATE DNS ZONE FILE WITH A RECORDS"
