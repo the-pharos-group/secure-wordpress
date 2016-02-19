@@ -59,7 +59,7 @@ sudo sed -i "22i define( 'DB_PASSWORD',     '$WPDBUSERPW' );" wp-config.php
 # mod the nginx default from the repo with updated variables from above and move into place
 cd ~/projects/secure-wordpress
 sudo sed -i "3i server_name $DOMAINNAME;" default
-sudo sed -i "4i 301 redirect http://$WWWDOMAINNAME\$request_uri;" default
+sudo sed -i "4i return 301 redirect http://$WWWDOMAINNAME\$request_uri;" default
 sudo sed -i "12i server_name $WWWDOMAINNAME;"
 sudo cp default /etc/nginx/sites-available/default
 sudo rm -rf /etc/nginx/sites-enabled/default
