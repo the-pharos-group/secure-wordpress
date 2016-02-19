@@ -1,0 +1,43 @@
+server {
+        listen 80;
+        server_name your_domain.com;
+        301 redirect http://www.your_domain.com$request_uri;
+}
+server {
+        listen 80;
+
+        root /var/www/html;
+        index index.php index.html index.htm;
+
+        server_name www.your_domain.com;
+
+        location / {
+                # try_files $uri $uri/ =404;
+                try_files $uri $uri/ /index.php?q=$uri&$args;
+        add_header X-Frame-Options "SAMEORIGIN";
+add_header X-Content-Type-Options nosniff;
+add_header X-XSS-Protection "1; mode=block";
+add_header Strict-Transport-Security max-age=7776000;
+add_header Content-Security-Policy "default-src 'self'; 
+script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://ajax.cloudflare.com; 
+img-src 'self' https://ssl.google-analytics.com ; 
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; 
+object-src 'none'";
+        }
+
+        error_page 404 /404.html;
+
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /usr/share/nginx/html;
+        }
+
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;
+                fastcgi_index index.php;
+                include fastcgi_params;
+        }
+}
