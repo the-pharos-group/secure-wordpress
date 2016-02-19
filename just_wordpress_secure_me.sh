@@ -17,9 +17,9 @@ sudo dpkg-reconfigure unattended-upgrades
 # install nginx & lock it down
 sudo apt-get install nginx nginx-extras -y
 # turn server tokens off for nginx (shuts off header info)
-sed -i "21i server_tokens off;" /etc/nginx/nginx.conf
+sudo sed -i "21i server_tokens off;" /etc/nginx/nginx.conf
 # set headers to a fake Server name to mess with people trying to scan for exploits
-sed -i "22i more_set_headers 'Server: FUCK_OFF_KIDDIES';" /etc/nginx/nginx.conf
+sudo sed -i "22i more_set_headers 'Server: FUCK_OFF_KIDDIES';" /etc/nginx/nginx.conf
 #sudo echo "server_tokens off;" >> /etc/nginx/nginx.conf
 #sudo echo "more_set_headers 'Server: FUCK_OFF_KIDDIES';" >> /etc/nginx/nginx.conf
 sudo nginx -s reload
@@ -60,7 +60,7 @@ cd ~/projects/secure-wordpress
 sed -i "3i server_name $DOMAINNAME;" default
 sed -i "4i 301 redirect http://$WWWDOMAINNAME\$request_uri;" default
 sed -i "12i server_name $WWWDOMAINNAME;"
-cp default /etc/nginx/sites-available/default
+sudo cp default /etc/nginx/sites-available/default
 
 #restart nginx to make sure everything is working
 sudo service nginx restart
