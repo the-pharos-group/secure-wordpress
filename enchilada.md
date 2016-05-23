@@ -201,7 +201,11 @@ nano /etc/php5/apache2/php.ini
 expose_php = Off # use CTRL + W and search for expose to get to this line quickly
 service apache2 restart # restart your instance now that php and apache2 are both locked down correctly
 ```
-
+## GEN STRONG DIFFIE-HELLMAN GROUP   
+If you can afford the time, do 4096 otherwise at least do 2048:
+```
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+```
 ## LOCK DOWN NGINX!
 Install nginx-extras to make the donuts.
 ```
@@ -217,16 +221,15 @@ sudo service nginx restart
 
 In the server section of either your custom vhost or your default vhost file in sites-available, add the following headers:
 ```
-add_header X-Frame-Options "SAMEORIGIN";
-add_header X-Content-Type-Options nosniff;
-add_header X-XSS-Protection "1; mode=block";
-add_header Strict-Transport-Security max-age=7776000;
-add_header Content-Security-Policy "default-src 'self'; 
-script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://ajax.cloudflare.com; 
-img-src 'self' https://ssl.google-analytics.com ; 
-style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
-font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; 
-object-src 'none'";
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_dhparam /etc/ssl/certs/dhparam.pem;
+        ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
+        ssl_session_timeout 1d;
+        ssl_session_cache shared:SSL:50m;
+        ssl_stapling on;
+        ssl_stapling_verify on;
+        add_header Strict-Transport-Security max-age=15768000;
 ```
 
 make sure to restart nginx:
